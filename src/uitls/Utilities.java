@@ -30,6 +30,7 @@ public class Utilities {
 		//System.out.println(cluster);
 		Point point = new Point(val, name, listofClusters.get(cluster));
 		randomList.remove((Object)cluster);
+		
 		return point;
 	}
 
