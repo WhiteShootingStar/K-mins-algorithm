@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -35,14 +36,17 @@ public class Clustering {
 			listOfPoints.add(Utilities.generatePoint(line, listOfClusters));
 		}
 		reader.close();
-
+//		for (Cluster cluster : listOfClusters) {
+//			System.out
+//					.println(listOfPoints.stream().filter(e -> e.cluster.equals(cluster)).map(e -> e.cluster).count());
+//		}
 		// for (Point point : listOfPoints) {
 		// System.out.println(point);
 		// }
 	}
 
 	public void cluster() {
-	
+
 		do {
 			listOfClustersToCompare = listOfPoints.stream().map(e -> e.cluster).collect(Collectors.toList());
 			List<Point> centroids = new ArrayList<>();
@@ -53,7 +57,7 @@ public class Clustering {
 			System.out.println(centroids);
 			System.out.println("<--------------------------------------------->");
 			System.err.println("before Reassigning Clusters");
-			 System.out.println(listOfPoints);
+			// System.out.println(listOfPoints);
 			System.out.println("<--------------------------------------------->");
 			for (Point point : listOfPoints) {
 				Utilities.calculateSquareDistances(point, centroids);
@@ -62,34 +66,48 @@ public class Clustering {
 			}
 			reassignValues();
 			System.err.println("after Reassigning Clusters");
-			 System.out.println(listOfPoints);
+			// System.out.println(listOfPoints);
 			// System.out.println(listOfPoints.stream().map(e ->
 			// e.cluster).collect(Collectors.toList())
 			// .equals(listOfClustersToCompare));
 			// System.out.println(centroids.toString());
-			sumOfDistances(centroids);
-			
+			//sumOfDistances(centroids);
+
 			System.out.println(totalSumOfDistances(centroids));
-			purity();
-			
-			
+			 purity();
+
 		} while (!listOfPoints.stream().map(e -> e.cluster).collect(Collectors.toList())
 				.equals(listOfClustersToCompare));
-
+//		System.out.println(listOfPoints.get(0).map.keySet().size());
+//		System.out.println(listOfPoints.get(0).map.keySet());
 	}
 
 	public void reassignValues() {
 		for (Point point : listOfPoints) {
 			double minDistance = point.map.values().stream().min(Comparator.naturalOrder()).get();
-			point.cluster = point.map.keySet().stream().filter(e -> point.map.get(e) == minDistance).map(e -> e.cluster)
+			
+			point.cluster = point.map.keySet().stream().filter(e -> point.map.get(e) .equals(minDistance)).map(e -> e.cluster)
 					.findFirst().get();
+//			System.out.println(minDistance + "   " + point.cluster);
+//			System.out.println("<------------->>>>>>>>>>>>>>");
+		//	System.out.println(point.map.values()  + "   <......>");
+			
 		}
+		
 	}
 
 	private void sumOfDistances(List<Point> centroids) {
 		for (Point point : centroids) {
-			System.out.println(listOfPoints.stream().filter(e -> e.cluster.equals(point.cluster))
-					.mapToDouble(e -> e.map.get(point)).sum() + " " + point);
+			List<Point> temp = listOfPoints.stream().filter(e -> e.cluster.equals(point.cluster))
+					.collect(Collectors.toList());
+			// System.out.println(listOfPoints.stream().filter(e ->
+			// e.cluster.equals(point.cluster))
+			// .mapToDouble(e -> e.map.get(point)).sum() + " " + point);
+			double sum = 0;
+			for (Point point2 : temp) {
+				sum += point2.map.get(point);
+			}
+			System.out.println(sum + "  " + point);
 		}
 	}
 
@@ -111,7 +129,7 @@ public class Clustering {
 				long labelCount = listOfPoints.stream().filter(e -> e.cluster.equals(cluster))
 						.filter(e -> e.name.equals(name)).count();
 				System.out.println(
-						"In " + cluster + " there are " + labelCount + " of " + name + " out of " + totalCount);
+						"In " + cluster + " there are " + labelCount + " of " + name + " out of " + totalCount + " in percent it is " +((double)labelCount/totalCount)*100 + " %");
 			}
 
 		}
