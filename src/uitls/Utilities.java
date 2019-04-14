@@ -55,8 +55,8 @@ public class Utilities {
 			}
 			System.out.println(belongingToCluster.size());
 			for (int i = 0; i < centroidValues.length; i++) {
-
-				centroidValues[i] = centroidValues[i] / belongingToCluster.size();
+				 if(belongingToCluster.size()>0) {
+				centroidValues[i] = centroidValues[i] / belongingToCluster.size();}
 			}
 		
 		// centroidValues = Arrays.stream(centroidValues).map(e -> e /
@@ -81,5 +81,8 @@ public class Utilities {
 			from.map.put(point, sum);
 		}
 
+	}
+	public static Point CalculateCentroidAnother(Cluster cluster, List<Point> listOfPoints) {
+		return listOfPoints.stream().filter(e->e.cluster.equals(cluster)).findAny().orElse(calculateCentroid(cluster, listOfPoints));
 	}
 }
